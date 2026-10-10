@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Brand } from "@/components/logo";
 import { NavLinks } from "@/components/nav-links";
 import { Socials } from "@/components/socials";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -13,8 +14,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
       <header className="sticky top-3 z-40 px-3 sm:top-4">
         <div className="glass relative mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 rounded-full pe-2 ps-5">
-          <Link href="/" className="text-base font-bold">
-            {s.name}
+          <Link href="/" aria-label={s.name}>
+            <Brand name={s.name} />
           </Link>
           <div className="flex items-center gap-1.5">
             <NavLinks />

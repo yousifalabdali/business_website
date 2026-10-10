@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoMark } from "@/components/logo";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { requireAdmin } from "@/lib/admin";
@@ -18,7 +19,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     <div className="mx-auto grid min-h-dvh max-w-7xl md:grid-cols-[240px_1fr]">
       <aside className="border-b border-border p-4 md:sticky md:top-0 md:h-dvh md:border-b-0 md:border-l md:p-6">
         <div className="mb-4 flex items-center justify-between md:mb-8">
-          <Link href="/admin" className="font-bold">لوحة التحكم</Link>
+          <Link href="/admin" className="flex items-center gap-2.5 font-bold"><LogoMark className="h-6" />لوحة التحكم</Link>
           <ThemeToggle />
         </div>
         <AdminNav unread={count ?? 0} />

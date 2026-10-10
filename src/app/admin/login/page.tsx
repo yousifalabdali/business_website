@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LoginForm } from "./login-form";
 
@@ -13,6 +14,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
         <ThemeToggle />
       </div>
       <div className="w-full max-w-sm rounded-3xl border border-border bg-card p-8 shadow-sm">
+        <div className="mb-6"><LogoMark className="h-8" preload /></div>
         <h1 className="text-2xl font-bold">لوحة التحكم</h1>
         <p className="mb-8 mt-1 text-sm text-muted">سجّل دخولك للمتابعة</p>
         <LoginForm notAdmin={error === "not-admin"} />
