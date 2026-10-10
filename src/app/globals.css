@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #ffffff;
+  --fg: #0b0b0c;
+  --muted: #6b6b73;
+  --subtle: #f5f5f6;
+  --border: #e7e7ea;
+  --card: #ffffff;
+  --accent: #2b59ff;
+  --accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0b0b0c;
+  --fg: #f3f3f4;
+  --muted: #9a9aa3;
+  --subtle: #151517;
+  --border: #242428;
+  --card: #111113;
+  --accent: #6d8bff;
+  --accent-fg: #0b0b0c;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --font-sans: var(--font-arabic), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.page-in {
+  animation: page-in 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@utility input {
+  @apply w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-fg outline-none transition placeholder:text-muted focus:border-fg/40 focus:ring-4 focus:ring-fg/5;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+@utility btn-primary {
+  @apply btn bg-fg text-bg hover:opacity-85;
+}
+@utility btn-ghost {
+  @apply btn border border-border hover:bg-subtle;
+}
+@utility btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium;
+}
