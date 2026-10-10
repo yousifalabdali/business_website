@@ -21,7 +21,7 @@ export function Socials({ socials }: { socials: SocialsT }) {
             href={v}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-full border border-border px-4 py-1.5 text-sm text-muted transition hover:border-fg/30 hover:text-fg"
+            className="neu inline-block rounded-full px-4 py-1.5 text-sm text-muted transition duration-300 hover:-translate-y-0.5 hover:text-accent active:scale-95"
           >
             {LABELS[k] ?? k}
           </a>

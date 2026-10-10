@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { List, X } from "@phosphor-icons/react";
 
 const LINKS = [
   { href: "/", label: "الرئيسية" },
@@ -22,17 +24,27 @@ export function NavLinks() {
   return (
     <>
       <nav className="hidden items-center gap-1 sm:flex">
-        {LINKS.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className={`rounded-full px-4 py-2 text-sm transition ${
-              isActive(pathname, l.href) ? "bg-subtle font-medium text-fg" : "text-muted hover:text-fg"
-            }`}
-          >
-            {l.label}
-          </Link>
-        ))}
+        {LINKS.map((l) => {
+          const active = isActive(pathname, l.href);
+          return (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`relative isolate rounded-full px-4 py-2 text-sm transition-colors ${
+                active ? "font-medium text-fg" : "text-muted hover:text-fg"
+              }`}
+            >
+              {active && (
+                <motion.span
+                  layoutId="nav-pill"
+                  className="neu absolute inset-0 -z-10 rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                />
+              )}
+              {l.label}
+            </Link>
+          );
+        })}
       </nav>
 
       <button
@@ -40,29 +52,35 @@ export function NavLinks() {
         onClick={() => setOpen((o) => !o)}
         aria-label="القائمة"
         aria-expanded={open}
-        className="grid size-9 place-items-center rounded-full border border-border sm:hidden"
+        className="grid size-10 place-items-center rounded-full transition hover:bg-subtle active:scale-95 sm:hidden"
       >
-        <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-        </svg>
+        {open ? <X size={18} /> : <List size={18} />}
       </button>
 
-      {open && (
-        <nav className="absolute inset-x-0 top-full border-b border-border bg-bg/95 px-4 py-3 backdrop-blur sm:hidden">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className={`block rounded-xl px-4 py-3 text-sm ${
-                isActive(pathname, l.href) ? "bg-subtle font-medium" : "text-muted"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="glass absolute inset-x-0 top-full mt-2 rounded-3xl p-2 sm:hidden"
+          >
+            {LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className={`block rounded-2xl px-4 py-3 text-sm ${
+                  isActive(pathname, l.href) ? "neu font-medium" : "text-muted"
+                }`}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </>
   );
 }

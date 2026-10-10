@@ -13,13 +13,13 @@ const arabic = IBM_Plex_Sans_Arabic({
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSettings();
   return {
-    title: { default: `${s.name} — ${s.job_title}`, template: `%s | ${s.name}` },
+    title: { default: `${s.name} | ${s.job_title}`, template: `%s | ${s.name}` },
     description: s.hero_subtitle,
   };
 }
 
-// Runs before first paint so the saved theme never flashes.
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d)}catch(e){}})()`;
+// Runs before first paint so the saved theme never flashes. Dark unless the visitor chose light.
+const themeScript = `(function(){try{document.documentElement.classList.toggle('dark',localStorage.getItem('theme')!=='light')}catch(e){document.documentElement.classList.add('dark')}})()`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

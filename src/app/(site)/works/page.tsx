@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { KineticHeading } from "@/components/motion/kinetic-heading";
+import { Reveal } from "@/components/motion/reveal";
 import { WorksGrid } from "@/components/works-grid";
 import { getProjects } from "@/lib/data";
 
@@ -9,14 +11,14 @@ export default async function WorksPage() {
   const projects = await getProjects();
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <h1 className="text-4xl font-bold tracking-tight">أعمالي</h1>
-      <p className="mb-10 mt-3 text-muted">{projects.length} مشروع</p>
+      <KineticHeading text="أعمالي" className="text-display" />
+      <Reveal delay={0.2}>
+        <p className="mb-10 mt-4 text-lg text-muted">{projects.length} مشروع</p>
+      </Reveal>
       {projects.length ? (
         <WorksGrid projects={projects} />
       ) : (
-        <p className="rounded-2xl border border-dashed border-border p-10 text-center text-muted">
-          لا توجد أعمال بعد.
-        </p>
+        <p className="glass rounded-3xl p-12 text-center text-muted">لا توجد أعمال بعد.</p>
       )}
     </section>
   );
