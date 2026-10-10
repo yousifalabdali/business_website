@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# موقع معرض الأعمال
 
-## Getting Started
+Next.js 16 + Tailwind + Supabase، ويُنشر على Vercel.
 
-First, run the development server:
+## الصفحات
+- `/` الرئيسية: العنوان الرئيسي والأعمال المميزة
+- `/works` كل الأعمال مع فلترة حسب التصنيف
+- `/works/[slug]` صفحة تفاصيل العمل ومعرض الصور
+- `/about` صفحة "عنّي"
+- `/contact` نموذج تواصل، والرسائل توصل للوحة التحكم
+- `/admin` لوحة التحكم: الأعمال، الرسائل، الإعدادات
 
+## الإعداد
+
+### 1) Supabase
+1. سوِّ مشروعاً جديداً على [supabase.com](https://supabase.com).
+2. افتح **SQL Editor** والصق محتوى `supabase/schema.sql` كاملاً ثم اضغط **Run**.
+3. من **Authentication → Users → Add user** أنشئ حسابك (إيميل وكلمة مرور، وفعّل Auto Confirm).
+4. ارجع لـ **SQL Editor** وشغّل هذا الاستعلام بعد ما تغيّر الإيميل لإيميلك:
+   ```sql
+   insert into public.admins (user_id)
+   select id from auth.users where email = 'you@example.com';
+   ```
+5. (يُنصح به) من **Authentication → Sign In / Providers** أوقف خيار **Allow new users to sign up**.
+6. من **Project Settings → API** انسخ `Project URL` و`anon public key`.
+
+### 2) التشغيل المحلي
 ```bash
+cp .env.example .env.local   # وحط القيم فيه
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3) Vercel
+1. ارفع المشروع على GitHub.
+2. في Vercel اختر **Add New → Project** واختر المستودع.
+3. في **Environment Variables** أضف:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. اضغط **Deploy**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ملاحظات
+- الصفحات العامة تُولَّد ثابتة (Static/ISR)، لذلك التصفح سريع. أي تعديل من لوحة التحكم يحدّث الموقع فوراً، وفي كل الأحوال تتحدث الصفحات تلقائياً كل 60 ثانية.
+- الصور تُرفع مباشرة إلى Supabase Storage (bucket اسمه `media`)، ويحسّنها `next/image` (AVIF/WebP).
+- الوضع الليلي يتبع إعداد الجهاز، ويُحفظ اختيار الزائر بدون أي وميض عند تحميل الصفحة.
+- لوحة التحكم محمية بـ Supabase Auth، وجدول `admins` مع سياسات RLS يمنع أي أحد غيرك من التعديل.
