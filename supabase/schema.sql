@@ -118,3 +118,49 @@ create policy "media admin delete" on storage.objects for delete using (bucket_i
 -- insert into public.admins (user_id)
 -- select id from auth.users where email = 'you@example.com';
 -- =========================================================
+
+-- =========================================================
+-- v2: English content + testimonials
+-- آمن للتشغيل أكثر من مرة. شغّله على أي قاعدة قديمة عشان تضيف الأعمدة الجديدة.
+-- =========================================================
+
+-- English versions (empty = fall back to Arabic on the English site)
+alter table public.settings add column if not exists name_en text not null default '';
+alter table public.settings add column if not exists job_title_en text not null default '';
+alter table public.settings add column if not exists hero_title_en text not null default '';
+alter table public.settings add column if not exists hero_subtitle_en text not null default '';
+alter table public.settings add column if not exists about_en text not null default '';
+alter table public.settings add column if not exists location_en text not null default '';
+
+alter table public.projects add column if not exists title_en text not null default '';
+alter table public.projects add column if not exists summary_en text not null default '';
+alter table public.projects add column if not exists description_en text not null default '';
+alter table public.projects add column if not exists category_en text not null default '';
+
+-- آراء العملاء
+create table if not exists public.testimonials (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  name_en text not null default '',
+  role text not null default '',
+  role_en text not null default '',
+  quote text not null,
+  quote_en text not null default '',
+  avatar_url text,
+  rating int not null default 5 check (rating between 1 and 5),
+  published boolean not null default true,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now()
+);
+create index if not exists testimonials_order_idx on public.testimonials (sort_order, created_at desc);
+
+alter table public.testimonials enable row level security;
+
+drop policy if exists "testimonials public read" on public.testimonials;
+create policy "testimonials public read" on public.testimonials for select using (published or public.is_admin());
+drop policy if exists "testimonials admin insert" on public.testimonials;
+create policy "testimonials admin insert" on public.testimonials for insert with check (public.is_admin());
+drop policy if exists "testimonials admin update" on public.testimonials;
+create policy "testimonials admin update" on public.testimonials for update using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "testimonials admin delete" on public.testimonials;
+create policy "testimonials admin delete" on public.testimonials for delete using (public.is_admin());

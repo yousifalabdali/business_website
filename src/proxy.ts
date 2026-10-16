@@ -1,8 +1,26 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Refreshes the Supabase session cookie and does an optimistic auth check for /admin.
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/admin")) return adminProxy(request);
+
+  // Arabic is the default language and lives at clean URLs: /ar/works -> /works.
+  if (pathname === "/ar" || pathname.startsWith("/ar/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.slice(3) || "/";
+    return NextResponse.redirect(url, 308);
+  }
+  if (pathname === "/en" || pathname.startsWith("/en/")) return NextResponse.next();
+
+  // Everything else is Arabic: serve it from the [lang] route without changing the URL.
+  const url = request.nextUrl.clone();
+  url.pathname = `/ar${pathname === "/" ? "" : pathname}`;
+  return NextResponse.rewrite(url);
+}
+
+// Refreshes the Supabase session cookie and does an optimistic auth check for /admin.
+async function adminProxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -31,5 +49,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  // Skip Next internals and any file with an extension (images, icons, robots.txt…).
+  matcher: ["/((?!_next/|.*\\.[\\w]+$).*)"],
 };

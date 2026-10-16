@@ -61,6 +61,29 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
       </div>
 
+      <fieldset className="grid gap-5 rounded-2xl border border-border p-5 sm:p-6" dir="ltr">
+        <legend className="px-2 font-semibold">English</legend>
+        <p className="-mt-2 text-sm text-muted" dir="rtl">اختياري. أي حقل فاضي يظهر بالعربي في النسخة الإنجليزية.</p>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label className="label" htmlFor="title_en">Title</label>
+            <input id="title_en" name="title_en" defaultValue={p?.title_en} className="input" />
+          </div>
+          <div>
+            <label className="label" htmlFor="category_en">Category</label>
+            <input id="category_en" name="category_en" defaultValue={p?.category_en} placeholder="e.g. Branding" className="input" />
+          </div>
+        </div>
+        <div>
+          <label className="label" htmlFor="summary_en">Short summary</label>
+          <input id="summary_en" name="summary_en" defaultValue={p?.summary_en} className="input" />
+        </div>
+        <div>
+          <label className="label" htmlFor="description_en">Details</label>
+          <textarea id="description_en" name="description_en" rows={7} defaultValue={p?.description_en} className="input resize-y" />
+        </div>
+      </fieldset>
+
       <ImageUpload name="cover_url" label="صورة الغلاف" defaultValue={p?.cover_url ? [p.cover_url] : []} />
       <ImageUpload name="images" label="معرض الصور" multiple defaultValue={p?.images} />
 

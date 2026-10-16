@@ -1,23 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpLeft } from "@phosphor-icons/react/ssr";
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 import { Spotlight } from "./motion/spotlight";
+import { localePath, type Lang } from "@/lib/i18n";
 import type { Project } from "@/lib/types";
 
 export function ProjectCard({
   project,
+  lang,
   preload,
   className = "aspect-[4/3]",
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
 }: {
   project: Project;
+  lang: Lang;
   preload?: boolean;
   className?: string;
   sizes?: string;
 }) {
   return (
     <Link
-      href={`/works/${project.slug}`}
+      href={localePath(lang, `/works/${project.slug}`)}
       className={`group block rounded-3xl outline-none transition duration-500 ease-out-expo hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >
       <Spotlight className="h-full rounded-3xl border border-border bg-subtle">
@@ -41,8 +44,8 @@ export function ProjectCard({
             <h3 className="truncate font-semibold">{project.title}</h3>
             {project.category && <p className="truncate text-xs text-muted">{project.category}</p>}
           </div>
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-accent-fg transition duration-500 ease-out-expo group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
-            <ArrowUpLeft size={16} weight="bold" />
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-accent-fg transition duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5">
+            <ArrowUpRight size={16} weight="bold" className="rtl:-scale-x-100" />
           </span>
         </div>
       </Spotlight>
