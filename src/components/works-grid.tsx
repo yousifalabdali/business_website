@@ -3,9 +3,10 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ProjectCard } from "./project-card";
+import type { Lang } from "@/lib/i18n";
 import type { Project } from "@/lib/types";
 
-export function WorksGrid({ projects }: { projects: Project[] }) {
+export function WorksGrid({ projects, lang, allLabel }: { projects: Project[]; lang: Lang; allLabel: string }) {
   const reduce = useReducedMotion();
   const categories = useMemo(
     () => Array.from(new Set(projects.map((p) => p.category).filter(Boolean))),
@@ -35,7 +36,7 @@ export function WorksGrid({ projects }: { projects: Project[] }) {
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
-              {c ?? "الكل"}
+              {c ?? allLabel}
             </button>
           ))}
         </div>
@@ -51,7 +52,7 @@ export function WorksGrid({ projects }: { projects: Project[] }) {
               exit={reduce ? undefined : { opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ProjectCard project={p} preload={i < 3} />
+              <ProjectCard project={p} lang={lang} preload={i < 3} />
             </motion.div>
           ))}
         </AnimatePresence>

@@ -2,22 +2,24 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ArrowUpLeft } from "@phosphor-icons/react/ssr";
+import { ArrowLeft, ArrowUpRight } from "@phosphor-icons/react/ssr";
 import { KineticHeading } from "@/components/motion/kinetic-heading";
 import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
 import { getProject, getProjects } from "@/lib/data";
+import { getDict, isLang, localePath } from "@/lib/i18n";
 
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const projects = await getProjects();
+  const projects = await getProjects("ar");
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps<"/works/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const p = await getProject(decodeURIComponent(slug));
+export async function generateMetadata({ params }: PageProps<"/[lang]/works/[slug]">): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLang(lang)) return {};
+  const p = await getProject(decodeURIComponent(slug), lang);
   if (!p) return {};
   return {
     title: p.title,
@@ -26,20 +28,22 @@ export async function generateMetadata({ params }: PageProps<"/works/[slug]">): 
   };
 }
 
-export default async function ProjectPage({ params }: PageProps<"/works/[slug]">) {
-  const { slug } = await params;
-  const p = await getProject(decodeURIComponent(slug));
+export default async function ProjectPage({ params }: PageProps<"/[lang]/works/[slug]">) {
+  const { lang, slug } = await params;
+  if (!isLang(lang)) notFound();
+  const p = await getProject(decodeURIComponent(slug), lang);
   if (!p) notFound();
+  const t = getDict(lang).works;
 
   const meta = [
-    p.category && { k: "التصنيف", v: p.category },
-    p.year && { k: "السنة", v: String(p.year) },
+    p.category && { k: t.category, v: p.category },
+    p.year && { k: t.year, v: String(p.year) },
   ].filter(Boolean) as { k: string; v: string }[];
 
   return (
     <article className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-      <Link href="/works" className="inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-accent">
-        <ArrowRight size={14} weight="bold" /> كل الأعمال
+      <Link href={localePath(lang, "/works")} className="inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-accent">
+        <ArrowLeft size={14} weight="bold" className="rtl:-scale-x-100" /> {t.back}
       </Link>
 
       <header className="mt-8">
@@ -75,7 +79,7 @@ export default async function ProjectPage({ params }: PageProps<"/works/[slug]">
               ))}
               {p.tags.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs text-muted">الأدوات</p>
+                  <p className="mb-2 text-xs text-muted">{t.tools}</p>
                   <ul className="flex flex-wrap gap-1.5">
                     {p.tags.map((t) => (
                       <li key={t} className="neu rounded-full px-3 py-1 text-sm">
@@ -88,7 +92,7 @@ export default async function ProjectPage({ params }: PageProps<"/works/[slug]">
               {p.link && (
                 <Magnetic strength={0.15}>
                   <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-primary">
-                    زيارة المشروع <ArrowUpLeft size={16} weight="bold" />
+                    {t.visit} <ArrowUpRight size={16} weight="bold" className="rtl:-scale-x-100" />
                   </a>
                 </Magnetic>
               )}

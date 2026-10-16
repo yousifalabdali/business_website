@@ -25,8 +25,9 @@ function slugify(input: string) {
   return s || Math.random().toString(36).slice(2, 8);
 }
 
+// Public pages are cached per language under app/[lang]; this refreshes every one of them.
 function refreshSite() {
-  revalidatePath("/", "layout");
+  revalidatePath("/[lang]", "layout");
 }
 
 // ---------- Auth ----------
@@ -62,6 +63,10 @@ export async function saveProject(_: FormState, form: FormData): Promise<FormSta
     summary: str(form, "summary"),
     description: str(form, "description"),
     category: str(form, "category"),
+    title_en: str(form, "title_en"),
+    summary_en: str(form, "summary_en"),
+    description_en: str(form, "description_en"),
+    category_en: str(form, "category_en"),
     cover_url: str(form, "cover_url") || null,
     images: form.getAll("images").map(String).filter(Boolean),
     tags: list(form, "tags"),
@@ -116,6 +121,54 @@ export async function deleteMessage(form: FormData) {
   revalidatePath("/admin", "layout");
 }
 
+// ---------- Testimonials ----------
+
+export async function saveTestimonial(_: FormState, form: FormData): Promise<FormState> {
+  const { supabase } = await requireAdmin();
+  const id = str(form, "id");
+  const name = str(form, "name");
+  const quote = str(form, "quote");
+  if (!name || !quote) return { error: "الاسم والرأي مطلوبين." };
+
+  const rating = parseInt(str(form, "rating"), 10);
+  const row = {
+    name,
+    name_en: str(form, "name_en"),
+    role: str(form, "role"),
+    role_en: str(form, "role_en"),
+    quote,
+    quote_en: str(form, "quote_en"),
+    avatar_url: str(form, "avatar_url") || null,
+    rating: rating >= 1 && rating <= 5 ? rating : 5,
+    published: form.get("published") === "on",
+    sort_order: parseInt(str(form, "sort_order"), 10) || 0,
+  };
+
+  const { error } = id
+    ? await supabase.from("testimonials").update(row).eq("id", id)
+    : await supabase.from("testimonials").insert(row);
+  if (error) return { error: error.message };
+  refreshSite();
+  redirect("/admin/testimonials");
+}
+
+export async function deleteTestimonial(form: FormData) {
+  const { supabase } = await requireAdmin();
+  await supabase.from("testimonials").delete().eq("id", str(form, "id"));
+  refreshSite();
+  revalidatePath("/admin/testimonials");
+}
+
+export async function toggleTestimonial(form: FormData) {
+  const { supabase } = await requireAdmin();
+  await supabase
+    .from("testimonials")
+    .update({ published: str(form, "value") === "true" })
+    .eq("id", str(form, "id"));
+  refreshSite();
+  revalidatePath("/admin/testimonials");
+}
+
 // ---------- Settings ----------
 
 export async function saveSettings(_: FormState, form: FormData): Promise<FormState> {
@@ -137,6 +190,12 @@ export async function saveSettings(_: FormState, form: FormData): Promise<FormSt
       email: str(form, "email") || null,
       phone: str(form, "phone") || null,
       location: str(form, "location") || null,
+      name_en: str(form, "name_en"),
+      job_title_en: str(form, "job_title_en"),
+      hero_title_en: str(form, "hero_title_en"),
+      hero_subtitle_en: str(form, "hero_subtitle_en"),
+      about_en: str(form, "about_en"),
+      location_en: str(form, "location_en"),
       skills: list(form, "skills"),
       socials,
       updated_at: new Date().toISOString(),

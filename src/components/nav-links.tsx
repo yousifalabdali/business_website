@@ -5,20 +5,21 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { List, X } from "@phosphor-icons/react";
+import { localePath, stripLang, type Dict, type Lang } from "@/lib/i18n";
 
 const LINKS = [
-  { href: "/", label: "الرئيسية" },
-  { href: "/works", label: "أعمالي" },
-  { href: "/about", label: "عنّي" },
-  { href: "/contact", label: "تواصل" },
-];
+  { href: "/", key: "home" },
+  { href: "/works", key: "works" },
+  { href: "/about", key: "about" },
+  { href: "/contact", key: "contact" },
+] as const;
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-export function NavLinks() {
-  const pathname = usePathname();
+export function NavLinks({ lang, t }: { lang: Lang; t: Dict["nav"] }) {
+  const pathname = stripLang(usePathname());
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,7 +30,7 @@ export function NavLinks() {
           return (
             <Link
               key={l.href}
-              href={l.href}
+              href={localePath(lang, l.href)}
               className={`relative isolate rounded-full px-4 py-2 text-sm transition-colors ${
                 active ? "font-medium text-fg" : "text-muted hover:text-fg"
               }`}
@@ -41,7 +42,7 @@ export function NavLinks() {
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
-              {l.label}
+              {t[l.key]}
             </Link>
           );
         })}
@@ -50,7 +51,7 @@ export function NavLinks() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        aria-label="القائمة"
+        aria-label={t.menu}
         aria-expanded={open}
         className="grid size-10 place-items-center rounded-full transition hover:bg-subtle active:scale-95 sm:hidden"
       >
@@ -69,13 +70,13 @@ export function NavLinks() {
             {LINKS.map((l) => (
               <Link
                 key={l.href}
-                href={l.href}
+                href={localePath(lang, l.href)}
                 onClick={() => setOpen(false)}
                 className={`block rounded-2xl px-4 py-3 text-sm ${
                   isActive(pathname, l.href) ? "neu font-medium" : "text-muted"
                 }`}
               >
-                {l.label}
+                {t[l.key]}
               </Link>
             ))}
           </motion.nav>

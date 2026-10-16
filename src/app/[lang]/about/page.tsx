@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { KineticHeading } from "@/components/motion/kinetic-heading";
 import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
 import { Socials } from "@/components/socials";
 import { getSettings } from "@/lib/data";
+import { getDict, isLang, localePath } from "@/lib/i18n";
 
 export const revalidate = 60;
-export const metadata: Metadata = { title: "عنّي" };
+export async function generateMetadata({ params }: PageProps<"/[lang]/about">): Promise<Metadata> {
+  const { lang } = await params;
+  return isLang(lang) ? { title: getDict(lang).about.title } : {};
+}
 
-export default async function AboutPage() {
-  const s = await getSettings();
+export default async function AboutPage({ params }: PageProps<"/[lang]/about">) {
+  const { lang } = await params;
+  if (!isLang(lang)) notFound();
+  const t = getDict(lang);
+  const s = await getSettings(lang);
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <p className="text-muted">{s.job_title}</p>
@@ -37,7 +45,7 @@ export default async function AboutPage() {
         {s.skills.length > 0 && (
           <Reveal delay={0.14} className="md:col-span-4">
             <div className="glass h-full rounded-3xl p-6 sm:p-8">
-              <h2 className="mb-5 font-semibold">المهارات</h2>
+              <h2 className="mb-5 font-semibold">{t.about.skills}</h2>
               <ul className="flex flex-wrap gap-2">
                 {s.skills.map((k) => (
                   <li key={k} className="neu rounded-full px-4 py-1.5 text-sm">
@@ -53,8 +61,8 @@ export default async function AboutPage() {
           <div className="glass flex flex-col gap-6 rounded-3xl p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
             <Socials socials={s.socials} />
             <Magnetic>
-              <Link href="/contact" className="btn-primary">
-                تواصل معي
+              <Link href={localePath(lang, "/contact")} className="btn-primary">
+                {t.home.contactMe}
               </Link>
             </Magnetic>
           </div>
