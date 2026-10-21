@@ -164,3 +164,28 @@ drop policy if exists "testimonials admin update" on public.testimonials;
 create policy "testimonials admin update" on public.testimonials for update using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "testimonials admin delete" on public.testimonials;
 create policy "testimonials admin delete" on public.testimonials for delete using (public.is_admin());
+
+-- ===================== الأداء =====================
+-- حد أعلى لعدد الصفوف في أي select عبر الـ API (حتى لو الاستعلام نسي limit)
+alter role authenticator set pgrst.db_max_rows = '200';
+notify pgrst, 'reload config';
+
+-- فهارس تطابق الاستعلامات الفعلية: published + الترتيب، بدل مسح الجدول كامل
+create index if not exists projects_published_order_idx
+  on public.projects (sort_order, created_at desc) where published;
+create index if not exists projects_featured_idx
+  on public.projects (sort_order, created_at desc) where published and featured;
+create index if not exists testimonials_published_order_idx
+  on public.testimonials (sort_order, created_at desc) where published;
+create index if not exists messages_created_idx on public.messages (created_at desc);
+create index if not exists messages_unread_idx on public.messages (created_at desc) where not read;
+
+-- (select ...) يخلي Postgres يحسب is_admin() مرة وحدة للاستعلام بدل كل صف
+drop policy if exists "projects public read" on public.projects;
+create policy "projects public read" on public.projects for select using (published or (select public.is_admin()));
+drop policy if exists "testimonials public read" on public.testimonials;
+create policy "testimonials public read" on public.testimonials for select using (published or (select public.is_admin()));
+drop policy if exists "messages admin read" on public.messages;
+create policy "messages admin read" on public.messages for select using ((select public.is_admin()));
+drop policy if exists "admins self read" on public.admins;
+create policy "admins self read" on public.admins for select using (user_id = (select auth.uid()));
