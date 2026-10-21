@@ -72,7 +72,7 @@ export async function getProjects(lang: Lang = "ar", opts: { featured?: boolean;
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
   if (opts.featured) q = q.eq("featured", true);
-  if (opts.limit) q = q.limit(opts.limit);
+  q = q.limit(opts.limit ?? 60);
   const { data } = await q;
   return ((data as Project[]) ?? []).map((p) => localizeProject(p, lang));
 }
@@ -84,6 +84,7 @@ export async function getProject(slug: string, lang: Lang = "ar"): Promise<Proje
     .select("*")
     .eq("slug", slug)
     .eq("published", true)
+    .limit(1)
     .maybeSingle();
   return data ? localizeProject(data as Project, lang) : null;
 }
@@ -95,6 +96,7 @@ export async function getTestimonials(lang: Lang = "ar"): Promise<Testimonial[]>
     .select("*")
     .eq("published", true)
     .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(30);
   return ((data as Testimonial[]) ?? []).map((t) => localizeTestimonial(t, lang));
 }

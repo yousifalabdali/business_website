@@ -11,7 +11,8 @@ export default async function AdminTestimonials() {
     .from("testimonials")
     .select("*")
     .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(200);
   const items = (data as Testimonial[]) ?? [];
 
   return (

@@ -7,7 +7,7 @@ const fmt = new Intl.DateTimeFormat("ar", { dateStyle: "medium", timeStyle: "sho
 
 export default async function AdminMessages() {
   const { supabase } = await requireAdmin();
-  const { data } = await supabase.from("messages").select("*").order("created_at", { ascending: false });
+  const { data } = await supabase.from("messages").select("*").order("created_at", { ascending: false }).limit(100);
   const messages = (data as Message[]) ?? [];
 
   return (
