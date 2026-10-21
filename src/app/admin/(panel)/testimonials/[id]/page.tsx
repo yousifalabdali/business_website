@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import { TestimonialForm } from "@/components/admin/testimonial-form";
 import { requireAdmin } from "@/lib/admin";
 import type { Testimonial } from "@/lib/types";
+import { TESTIMONIAL_COLUMNS } from "@/lib/columns";
 
 export default async function EditTestimonial({ params }: PageProps<"/admin/testimonials/[id]">) {
   const { id } = await params;
   const { supabase } = await requireAdmin();
-  const { data } = await supabase.from("testimonials").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("testimonials").select(TESTIMONIAL_COLUMNS).eq("id", id).maybeSingle();
   if (!data) notFound();
   const t = data as Testimonial;
 

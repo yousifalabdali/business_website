@@ -1,6 +1,7 @@
 import { publicClient } from "./supabase/public";
 import type { Lang } from "./i18n";
 import type { Project, Settings, Testimonial } from "./types";
+import { PROJECT_COLUMNS, SETTINGS_COLUMNS, TESTIMONIAL_COLUMNS } from "@/lib/columns";
 
 export const DEFAULT_SETTINGS: Settings = {
   id: 1,
@@ -59,7 +60,7 @@ function localizeTestimonial(t: Testimonial, lang: Lang): Testimonial {
 
 export async function getSettings(lang: Lang = "ar"): Promise<Settings> {
   if (!publicClient) return DEFAULT_SETTINGS;
-  const { data } = await publicClient.from("settings").select("*").eq("id", 1).maybeSingle();
+  const { data } = await publicClient.from("settings").select(SETTINGS_COLUMNS).eq("id", 1).maybeSingle();
   return localizeSettings({ ...DEFAULT_SETTINGS, ...(data ?? {}) }, lang);
 }
 
@@ -67,7 +68,7 @@ export async function getProjects(lang: Lang = "ar", opts: { featured?: boolean;
   if (!publicClient) return [];
   let q = publicClient
     .from("projects")
-    .select("*")
+    .select(PROJECT_COLUMNS)
     .eq("published", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
@@ -81,7 +82,7 @@ export async function getProject(slug: string, lang: Lang = "ar"): Promise<Proje
   if (!publicClient) return null;
   const { data } = await publicClient
     .from("projects")
-    .select("*")
+    .select(PROJECT_COLUMNS)
     .eq("slug", slug)
     .eq("published", true)
     .limit(1)
@@ -93,7 +94,7 @@ export async function getTestimonials(lang: Lang = "ar"): Promise<Testimonial[]>
   if (!publicClient) return [];
   const { data } = await publicClient
     .from("testimonials")
-    .select("*")
+    .select(TESTIMONIAL_COLUMNS)
     .eq("published", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false })

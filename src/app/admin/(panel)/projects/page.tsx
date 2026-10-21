@@ -4,6 +4,7 @@ import { ConfirmButton } from "@/components/admin/confirm-button";
 import { requireAdmin } from "@/lib/admin";
 import type { Project } from "@/lib/types";
 import { deleteProject, toggleProject } from "../../actions";
+import { PROJECT_COLUMNS } from "@/lib/columns";
 
 function Toggle({ p, field, label }: { p: Project; field: "published" | "featured"; label: string }) {
   const on = p[field];
@@ -27,7 +28,7 @@ export default async function AdminProjects() {
   const { supabase } = await requireAdmin();
   const { data } = await supabase
     .from("projects")
-    .select("*")
+    .select(PROJECT_COLUMNS)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false })
     .limit(200);

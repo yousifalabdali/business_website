@@ -4,12 +4,13 @@ import { ConfirmButton } from "@/components/admin/confirm-button";
 import { requireAdmin } from "@/lib/admin";
 import type { Testimonial } from "@/lib/types";
 import { deleteTestimonial, toggleTestimonial } from "../../actions";
+import { TESTIMONIAL_COLUMNS } from "@/lib/columns";
 
 export default async function AdminTestimonials() {
   const { supabase } = await requireAdmin();
   const { data } = await supabase
     .from("testimonials")
-    .select("*")
+    .select(TESTIMONIAL_COLUMNS)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false })
     .limit(200);

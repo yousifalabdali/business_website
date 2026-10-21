@@ -2,12 +2,13 @@ import { ConfirmButton } from "@/components/admin/confirm-button";
 import { requireAdmin } from "@/lib/admin";
 import type { Message } from "@/lib/types";
 import { deleteMessage, markMessage } from "../../actions";
+import { MESSAGE_COLUMNS } from "@/lib/columns";
 
 const fmt = new Intl.DateTimeFormat("ar", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
 
 export default async function AdminMessages() {
   const { supabase } = await requireAdmin();
-  const { data } = await supabase.from("messages").select("*").order("created_at", { ascending: false }).limit(100);
+  const { data } = await supabase.from("messages").select(MESSAGE_COLUMNS).order("created_at", { ascending: false }).limit(100);
   const messages = (data as Message[]) ?? [];
 
   return (

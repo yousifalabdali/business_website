@@ -10,10 +10,11 @@ export const metadata: Metadata = { title: "لوحة التحكم", robots: { in
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const { supabase, user } = await requireAdmin();
-  const { count } = await supabase
+  const { data: unreadRows } = await supabase
     .from("messages")
-    .select("id", { count: "exact", head: true })
-    .eq("read", false);
+    .select("id")
+    .eq("read", false)
+    .limit(100);
 
   return (
     <div className="mx-auto grid min-h-dvh max-w-7xl md:grid-cols-[240px_1fr]">
@@ -22,7 +23,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           <Link href="/admin" className="flex items-center gap-2.5 font-bold"><LogoMark className="h-6" />لوحة التحكم</Link>
           <ThemeToggle />
         </div>
-        <AdminNav unread={count ?? 0} />
+        <AdminNav unread={unreadRows?.length ?? 0} />
         <div className="mt-4 hidden border-t border-border pt-4 text-sm md:mt-8 md:block">
           <p className="truncate text-muted" dir="ltr">{user.email}</p>
           <div className="mt-3 flex gap-2">

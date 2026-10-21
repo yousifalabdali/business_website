@@ -3,11 +3,12 @@ import { notFound } from "next/navigation";
 import { ProjectForm } from "@/components/admin/project-form";
 import { requireAdmin } from "@/lib/admin";
 import type { Project } from "@/lib/types";
+import { PROJECT_COLUMNS } from "@/lib/columns";
 
 export default async function EditProject({ params }: PageProps<"/admin/projects/[id]">) {
   const { id } = await params;
   const { supabase } = await requireAdmin();
-  const { data } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("projects").select(PROJECT_COLUMNS).eq("id", id).maybeSingle();
   if (!data) notFound();
   const p = data as Project;
 
