@@ -37,9 +37,9 @@ async function adminProxy(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims() refreshes the session if needed and verifies the JWT locally (no auth round trip).
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims;
 
   const isLogin = request.nextUrl.pathname.startsWith("/admin/login");
   if (!user && !isLogin) {
