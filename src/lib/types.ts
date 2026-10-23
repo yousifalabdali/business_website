@@ -15,6 +15,12 @@ export type Settings = {
   location: string | null;
   skills: string[];
   socials: Socials;
+  name_en: string;
+  job_title_en: string;
+  hero_title_en: string;
+  hero_subtitle_en: string;
+  about_en: string;
+  location_en: string;
 };
 
 export type Project = {
@@ -30,6 +36,25 @@ export type Project = {
   link: string | null;
   year: number | null;
   featured: boolean;
+  published: boolean;
+  sort_order: number;
+  created_at: string;
+  title_en: string;
+  summary_en: string;
+  description_en: string;
+  category_en: string;
+};
+
+export type Testimonial = {
+  id: string;
+  name: string;
+  name_en: string;
+  role: string;
+  role_en: string;
+  quote: string;
+  quote_en: string;
+  avatar_url: string | null;
+  rating: number;
   published: boolean;
   sort_order: number;
   created_at: string;

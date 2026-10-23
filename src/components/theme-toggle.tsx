@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "@phosphor-icons/react";
 
-export function ThemeToggle() {
+export function ThemeToggle({ label = "تبديل الوضع الليلي" }: { label?: string }) {
   function toggle() {
     const dark = !document.documentElement.classList.contains("dark");
     document.documentElement.classList.toggle("dark", dark);
@@ -15,7 +15,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label="تبديل الوضع الليلي"
+      aria-label={label}
       className="neu grid size-10 place-items-center rounded-full transition duration-300 hover:text-accent active:scale-90"
     >
       <Moon size={18} className="dark:hidden" />

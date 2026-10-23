@@ -4,18 +4,18 @@ import { logout } from "../actions";
 
 export default async function AdminHome() {
   const { supabase } = await requireAdmin();
-  const [projects, published, messages, unread] = await Promise.all([
-    supabase.from("projects").select("id", { count: "exact", head: true }),
-    supabase.from("projects").select("id", { count: "exact", head: true }).eq("published", true),
-    supabase.from("messages").select("id", { count: "exact", head: true }),
-    supabase.from("messages").select("id", { count: "exact", head: true }).eq("read", false),
+  const [{ data: projectRows }, { data: messageRows }] = await Promise.all([
+    supabase.from("projects").select("published").limit(500),
+    supabase.from("messages").select("read").limit(500),
   ]);
+  const projects = projectRows ?? [];
+  const messages = messageRows ?? [];
 
   const stats = [
-    { label: "كل الأعمال", value: projects.count ?? 0, href: "/admin/projects" },
-    { label: "منشورة", value: published.count ?? 0, href: "/admin/projects" },
-    { label: "الرسائل", value: messages.count ?? 0, href: "/admin/messages" },
-    { label: "غير مقروءة", value: unread.count ?? 0, href: "/admin/messages" },
+    { label: "كل الأعمال", value: projects.length, href: "/admin/projects" },
+    { label: "منشورة", value: projects.filter((p) => p.published).length, href: "/admin/projects" },
+    { label: "الرسائل", value: messages.length, href: "/admin/messages" },
+    { label: "غير مقروءة", value: messages.filter((m) => !m.read).length, href: "/admin/messages" },
   ];
 
   return (

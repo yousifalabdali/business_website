@@ -65,6 +65,38 @@ export function SettingsForm({ s }: { s: Settings }) {
         </div>
       </Section>
 
+      <Section title="English">
+        <div dir="ltr" className="grid gap-5">
+          <p className="-mt-2 text-sm text-muted" dir="rtl">اختياري. أي حقل فاضي يظهر بالعربي في النسخة الإنجليزية.</p>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="label" htmlFor="name_en">Name</label>
+              <input id="name_en" name="name_en" defaultValue={s.name_en} className="input" />
+            </div>
+            <div>
+              <label className="label" htmlFor="job_title_en">Job title</label>
+              <input id="job_title_en" name="job_title_en" defaultValue={s.job_title_en} className="input" />
+            </div>
+          </div>
+          <div>
+            <label className="label" htmlFor="hero_title_en">Hero headline</label>
+            <input id="hero_title_en" name="hero_title_en" defaultValue={s.hero_title_en} className="input" />
+          </div>
+          <div>
+            <label className="label" htmlFor="hero_subtitle_en">Hero subtitle</label>
+            <textarea id="hero_subtitle_en" name="hero_subtitle_en" rows={2} defaultValue={s.hero_subtitle_en} className="input" />
+          </div>
+          <div>
+            <label className="label" htmlFor="about_en">About</label>
+            <textarea id="about_en" name="about_en" rows={7} defaultValue={s.about_en} className="input resize-y" />
+          </div>
+          <div>
+            <label className="label" htmlFor="location_en">Location</label>
+            <input id="location_en" name="location_en" defaultValue={s.location_en} className="input" />
+          </div>
+        </div>
+      </Section>
+
       <Section title="التواصل">
         <div className="grid gap-5 sm:grid-cols-3">
           <div>
