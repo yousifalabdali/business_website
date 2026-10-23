@@ -11,8 +11,6 @@ import { dirOf, getDict, isLang, LANGS, localePath } from "@/lib/i18n";
 import { arabicFont, ThemeScript } from "@/lib/root";
 import "../globals.css";
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
